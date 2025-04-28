@@ -55,6 +55,7 @@ Drawer 内的内容一般业务中，会比较复杂，所以我们可以将 dra
 - `VbenDrawer` 组件对与参数的处理优先级是 `slot` > `props` > `state`(通过api更新的状态以及useVbenDrawer参数)。如果你已经传入了 `slot` 或者 `props`，那么 `setState` 将不会生效，这种情况下你可以通过 `slot` 或者 `props` 来更新状态。
 - 如果你使用到了 `connectedComponent` 参数，那么会存在 2 个`useVbenDrawer`, 此时，如果同时设置了相同的参数，那么以内部为准（也就是没有设置 connectedComponent 的代码）。比如 同时设置了 `onConfirm`，那么以内部的 `onConfirm` 为准。`onOpenChange`事件除外，内外都会触发。
 - 使用了`connectedComponent`参数时，可以配置`destroyOnClose`属性来决定当关闭弹窗时，是否要销毁`connectedComponent`组件（重新创建`connectedComponent`组件，这将会把其内部所有的变量、状态、数据等恢复到初始状态。）。
+- 如果抽屉的默认行为不符合你的预期，可以在`src\bootstrap.ts`中修改`setDefaultDrawerProps`的参数来设置默认的属性，如默认隐藏全屏按钮，修改默认ZIndex等。
 
 :::
 
@@ -101,6 +102,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
 | footerClass | modal底部区域的class | `string` | - |
 | headerClass | modal顶部区域的class | `string` | - |
 | zIndex | 抽屉的ZIndex层级 | `number` | `1000` |
+| overlayBlur | 遮罩模糊度 | `number` | - |
 
 ::: info appendToMain
 
@@ -125,21 +127,30 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
 除了上面的属性类型包含`slot`，还可以通过插槽来自定义弹窗的内容。
 
-| 插槽名         | 描述                |
-| -------------- | ------------------- |
-| default        | 默认插槽 - 弹窗内容 |
-| prepend-footer | 取消按钮左侧        |
-| append-footer  | 取消按钮右侧        |
-| close-icon     | 关闭按钮图标        |
-| extra          | 额外内容(标题右侧)  |
+| 插槽名         | 描述                                               |
+| -------------- | -------------------------------------------------- |
+| default        | 默认插槽 - 弹窗内容                                |
+| prepend-footer | 取消按钮左侧                                       |
+| center-footer  | 取消按钮和确认按钮中间（不使用 footer 插槽时有效） |
+| append-footer  | 确认按钮右侧                                       |
+| close-icon     | 关闭按钮图标                                       |
+| extra          | 额外内容(标题右侧)                                 |
 
-### modalApi
+### drawerApi
 
-| 事件名 | 描述 | 类型 |
-| --- | --- | --- |
-| setState | 动态设置弹窗状态属性 | `setState(props) \| setState((prev)=>(props))` |
-| open | 打开弹窗 | `()=>void` |
-| close | 关闭弹窗 | `()=>void` |
-| setData | 设置共享数据 | `<T>(data:T)=>void` |
-| getData | 获取共享数据 | `<T>()=>T` |
-| useStore | 获取可响应式状态 | - |
+| 方法 | 描述 | 类型 | 版本限制 |
+| --- | --- | --- | --- |
+| setState | 动态设置弹窗状态属性 | `(((prev: ModalState) => Partial<ModalState>)\| Partial<ModalState>)=>drawerApi` |
+| open | 打开弹窗 | `()=>void` | --- |
+| close | 关闭弹窗 | `()=>void` | --- |
+| setData | 设置共享数据 | `<T>(data:T)=>drawerApi` | --- |
+| getData | 获取共享数据 | `<T>()=>T` | --- |
+| useStore | 获取可响应式状态 | - | --- |
+| lock | 将抽屉标记为提交中，锁定当前状态 | `(isLock:boolean)=>drawerApi` | >5.5.3 |
+| unlock | lock方法的反操作，解除抽屉的锁定状态，也是lock(false)的别名 | `()=>drawerApi` | >5.5.3 |
+
+::: info lock
+
+`lock`方法用于锁定抽屉的状态，一般用于提交数据的过程中防止用户重复提交或者抽屉被意外关闭、表单数据被改变等等。当处于锁定状态时，抽屉的确认按钮会变为loading状态，同时禁用取消按钮和关闭按钮、禁止ESC或者点击遮罩等方式关闭抽屉、开启抽屉的spinner动画以遮挡弹窗内容。调用`close`方法关闭处于锁定状态的抽屉时，会自动解锁。要主动解除这种状态，可以调用`unlock`方法或者再次调用lock方法并传入false参数。
+
+:::

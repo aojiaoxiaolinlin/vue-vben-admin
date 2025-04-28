@@ -1,6 +1,6 @@
 {
   "name": "@vben/common-ui",
-  "version": "5.5.2",
+  "version": "5.5.5",
   "homepage": "https://github.com/vbenjs/vue-vben-admin",
   "bugs": "https://github.com/vbenjs/vue-vben-admin/issues",
   "repository": {
@@ -17,11 +17,20 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./es/tippy": {
+      "types": "./src/components/tippy/index.ts",
+      "default": "./src/components/tippy/index.ts"
+    },
+    "./es/loading": {
+      "types": "./src/components/loading/index.ts",
+      "default": "./src/components/loading/index.ts"
     }
   },
   "dependencies": {
     "@vben-core/form-ui": "workspace:*",
     "@vben-core/popup-ui": "workspace:*",
+    "@vben-core/preferences": "workspace:*",
     "@vben-core/shadcn-ui": "workspace:*",
     "@vben-core/shared": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -32,8 +41,11 @@
     "@vueuse/core": "catalog:",
     "@vueuse/integrations": "catalog:",
     "qrcode": "catalog:",
+    "tippy.js": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-json-viewer": "catalog:",
+    "vue-router": "catalog:",
+    "vue-tippy": "catalog:"
   },
   "devDependencies": {
     "@types/qrcode": "catalog:"

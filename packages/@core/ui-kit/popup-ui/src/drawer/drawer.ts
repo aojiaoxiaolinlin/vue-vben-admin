@@ -1,6 +1,6 @@
 import type { Component, Ref } from 'vue';
 
-import type { ClassType } from '@vben-core/typings';
+import type { ClassType, MaybePromise } from '@vben-core/typings';
 
 import type { DrawerApi } from './drawer-api';
 
@@ -53,6 +53,10 @@ export interface DrawerProps {
    */
   description?: string;
   /**
+   * 在关闭时销毁抽屉
+   */
+  destroyOnClose?: boolean;
+  /**
    * 是否显示底部
    * @default true
    */
@@ -75,16 +79,20 @@ export interface DrawerProps {
    * @default false
    */
   loading?: boolean;
-
   /**
    * 是否显示遮罩
    * @default true
    */
   modal?: boolean;
+
   /**
    * 是否自动聚焦
    */
   openAutoFocus?: boolean;
+  /**
+   * 弹窗遮罩模糊效果
+   */
+  overlayBlur?: number;
   /**
    * 抽屉位置
    * @default right
@@ -101,6 +109,10 @@ export interface DrawerProps {
    * @default true
    */
   showConfirmButton?: boolean;
+  /**
+   * 提交中（锁定抽屉状态）
+   */
+  submitting?: boolean;
   /**
    * 弹窗标题
    */
@@ -136,14 +148,10 @@ export interface DrawerApiOptions extends DrawerState {
    */
   connectedComponent?: Component;
   /**
-   * 在关闭时销毁抽屉。仅在使用 connectedComponent 时有效
-   */
-  destroyOnClose?: boolean;
-  /**
    * 关闭前的回调，返回 false 可以阻止关闭
    * @returns
    */
-  onBeforeClose?: () => void;
+  onBeforeClose?: () => MaybePromise<boolean | undefined>;
   /**
    * 点击取消按钮的回调
    */
