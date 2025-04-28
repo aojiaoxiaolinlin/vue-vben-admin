@@ -20,6 +20,8 @@ type ExtendOptions<T = unknown> = {
     | 'indices'
     | 'repeat'
     | AxiosRequestConfig<T>['paramsSerializer'];
+
+  // TODO: 我觉得这个功能很傻逼，考虑去除
   /**
    * 响应数据的返回方式。
    * - raw: 原始的AxiosResponse，包括headers、status等，不做是否成功请求的检查。
@@ -42,6 +44,7 @@ type RequestContentType =
   | 'multipart/form-data;charset=utf-8';
 
 type RequestClientOptions = CreateAxiosDefaults & ExtendOptions;
+
 interface HttpResponse<T = unknown> {
   /**
    * 0 表示成功 其他表示失败
@@ -67,15 +70,15 @@ type MakeErrorMessageFn = (
 
 interface RequestInterceptorConfig {
   fulfilled?: (
-    config: InternalAxiosRequestConfig,
+    config: ExtendOptions & InternalAxiosRequestConfig,
   ) =>
-    | InternalAxiosRequestConfig<unknown>
-    | Promise<InternalAxiosRequestConfig<unknown>>;
+    | (ExtendOptions & InternalAxiosRequestConfig<unknown>)
+    | (ExtendOptions & Promise<InternalAxiosRequestConfig<unknown>>);
   rejected?: (error: unknown) => unknown;
 }
 
 interface ResponseInterceptorConfig<T = HttpResponse> {
-  fulfilled?: (response: AxiosResponse<T>) => HttpResponseData<T> | T;
+  fulfilled?: (response: RequestResponse<T>) => HttpResponseData<T> | T;
   rejected?: (
     error: AxiosError<HttpErrorResponse>,
   ) => AxiosError | Promise<AxiosError>;

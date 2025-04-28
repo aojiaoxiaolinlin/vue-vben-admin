@@ -17,18 +17,20 @@ function getParamsSerializer(
   if (isString(paramsSerializer)) {
     switch (paramsSerializer) {
       case 'brackets': {
-        return (params: any) =>
+        return (params: unknown) =>
           qs.stringify(params, { arrayFormat: 'brackets' });
       }
       case 'comma': {
-        return (params: any) => qs.stringify(params, { arrayFormat: 'comma' });
+        return (params: unknown) =>
+          qs.stringify(params, { arrayFormat: 'comma' });
       }
       case 'indices': {
-        return (params: any) =>
+        return (params: unknown) =>
           qs.stringify(params, { arrayFormat: 'indices' });
       }
       case 'repeat': {
-        return (params: any) => qs.stringify(params, { arrayFormat: 'repeat' });
+        return (params: unknown) =>
+          qs.stringify(params, { arrayFormat: 'repeat' });
       }
     }
   }
@@ -89,7 +91,7 @@ class RequestClient {
   /**
    * DELETE请求方法
    */
-  public delete<T = any>(
+  public delete<T = unknown>(
     url: string,
     config?: RequestClientConfig,
   ): Promise<T> {
@@ -99,7 +101,10 @@ class RequestClient {
   /**
    * GET请求方法
    */
-  public get<T = any>(url: string, config?: RequestClientConfig): Promise<T> {
+  public get<T = unknown>(
+    url: string,
+    config?: RequestClientConfig,
+  ): Promise<T> {
     return this.request<T>(url, { ...config, method: 'GET' });
   }
 
